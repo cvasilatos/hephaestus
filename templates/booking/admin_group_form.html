@@ -1,0 +1,16 @@
+{% extends "booking/base.html" %}
+{% block title %}{% if group %}{{ group.name }}{% else %}New group{% endif %} · Hephaestus{% endblock %}
+{% block content %}
+<section class="settings-page">
+  <div class="page-heading"><span class="eyebrow">Administration</span><h1>{% if group %}{{ group.name }}{% else %}New research group{% endif %}</h1><p>Configure membership, monthly shared-pool quota, and fixed-GPU borrowing permissions.</p></div>
+  <form method="post" class="settings-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    <section class="panel settings-section"><header><span class="step">01</span><div><h2>Group details</h2><p>Name, status, and monthly shared GPU-hour allowance.</p></div></header><div class="settings-grid">{% include "booking/_setting_field.html" with field=form.name %}{% include "booking/_setting_field.html" with field=form.monthly_shared_gpu_hours %}{% include "booking/_setting_field.html" with field=form.enabled %}{% include "booking/_setting_field.html" with field=form.notes %}</div></section>
+    <section class="panel settings-section"><header><span class="step">02</span><div><h2>Members</h2><p>Every selected user is assigned to this research group.</p></div></header><div class="choice-grid">{{ form.members }}{{ form.members.errors }}</div></section>
+    <section class="panel settings-section"><header><span class="step">03</span><div><h2>Owned fixed GPUs</h2><p>Assign any number of discovered GPUs to this group. Removing a GPU leaves it unassigned until it is reconfigured.</p></div></header><div class="choice-grid">{{ form.fixed_gpus }}{{ form.fixed_gpus.errors }}</div><p class="help-text">{{ form.fixed_gpus.help_text }}</p></section>
+    <section class="panel settings-section"><header><span class="step">04</span><div><h2>Borrowing permissions</h2><p>Allow this group to reserve selected fixed GPUs owned by other groups.</p></div></header><div class="choice-grid">{{ form.borrowed_gpus }}{{ form.borrowed_gpus.errors }}</div><p class="help-text">{{ form.borrowed_gpus.help_text }}</p></section>
+    <div class="form-actions sticky-actions"><a class="button secondary" href="{% url 'admin-overview' %}">Back</a><button class="button primary" type="submit">Save group</button></div>
+  </form>
+</section>
+{% endblock %}

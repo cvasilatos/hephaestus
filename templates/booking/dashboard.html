@@ -1,0 +1,56 @@
+{% extends "booking/base.html" %}
+{% block title %}Schedule · Hephaestus{% endblock %}
+{% block content %}
+<section class="page-heading split-heading">
+  <div><span class="eyebrow">Live availability</span><h1>GPU schedule</h1><p>Choose the cards you need, then reserve one shared time window.</p></div>
+  <a class="button primary" href="{% url 'reservation-create' %}">Book GPUs</a>
+</section>
+
+<section class="usage-summary panel" aria-label="Monthly GPU usage">
+  <div><span class="eyebrow">{{ usage_month|date:"F Y" }}</span><strong>Your usage</strong><span>{{ user_usage.shared_gpu_hours }} shared · {{ user_usage.fixed_gpu_hours }} fixed GPU-hours</span></div>
+  <div><span class="eyebrow">Research group</span><strong>{{ user.profile.research_group|default:"Not assigned" }}</strong>{% if group_usage %}<span>{{ group_usage.shared_gpu_hours }} / {% if user.profile.research_group.monthly_shared_gpu_hours %}{{ user.profile.research_group.monthly_shared_gpu_hours }}{% else %}unlimited{% endif %} shared GPU-hours</span>{% else %}<span>Ask an administrator to assign your group.</span>{% endif %}</div>
+  <a class="button secondary small" href="{% url 'policy' %}">View policy</a>
+</section>
+
+{% if site_configuration.require_verified_email and not user.profile.email_is_verified %}
+<aside class="notice"><strong>Verify your email before booking.</strong> Reminders and shutdown warnings need a confirmed address. <a href="{% url 'profile-email' %}">Add or verify email</a>.</aside>
+{% endif %}
+
+{% if my_active %}
+<aside class="active-strip" data-countdown="{{ my_active.ends_at.isoformat }}">
+  <div><span class="pulse"></span><strong>Your reservation is active</strong></div>
+  <div>Ends <time data-local-time="{{ my_active.ends_at.isoformat }}">{{ my_active.ends_at }}</time> · <span data-countdown-output></span></div>
+</aside>
+{% endif %}
+
+<section class="gpu-grid" aria-label="GPU availability">
+{% for card in cards %}
+  <article class="gpu-card {% if not card.gpu.enabled or not card.gpu.healthy %}offline{% elif card.active %}busy{% else %}available{% endif %}">
+    <header><span class="gpu-index">{% if card.gpu.current_index != None %}{{ card.gpu.current_index }}{% else %}?{% endif %}</span><span class="status-dot"></span></header>
+    <h2>{{ card.gpu.name }}</h2>
+    <p class="gpu-meta">{{ card.gpu.memory_mb }} MB · {{ card.gpu.short_uuid }}</p>
+    {% if not card.gpu.enabled %}
+      <div class="gpu-state"><strong>Disabled</strong><span>Not accepting bookings</span></div>
+    {% elif not card.gpu.healthy %}
+      <div class="gpu-state"><strong>Needs attention</strong><span>{{ card.gpu.status_message|default:"Agent reported an error" }}</span></div>
+    {% elif card.active %}
+      <div class="gpu-state"><strong>In use</strong><span>{{ card.active_owner }} until <time data-local-time="{{ card.active.ends_at.isoformat }}">{{ card.active.ends_at }}</time></span></div>
+    {% else %}
+      <div class="gpu-state"><strong>Available now</strong><span>{% if card.upcoming %}Next at <time data-local-time="{{ card.upcoming.starts_at.isoformat }}">{{ card.upcoming.starts_at }}</time>{% else %}No upcoming booking{% endif %}</span></div>
+    {% endif %}
+  </article>
+{% empty %}
+  <div class="empty-state"><h2>No GPUs discovered</h2><p>An administrator needs to run <code>gpu-accessd discover</code> on the server.</p></div>
+{% endfor %}
+</section>
+
+<section class="panel schedule-panel">
+  <header class="panel-heading">
+    <div><span class="eyebrow">Next {{ calendar_days }} day{{ calendar_days|pluralize }}</span><h2>Reservation calendar</h2></div>
+    <div class="segmented"><button type="button" class="active" data-calendar-view="week">Week</button><button type="button" data-calendar-view="list">List</button></div>
+  </header>
+  {{ events|json_script:"calendar-events" }}
+  <div id="week-calendar" class="week-calendar" data-calendar-days="{{ calendar_days }}" aria-label="Reservation calendar"></div>
+  <div id="list-calendar" class="list-calendar" hidden></div>
+</section>
+{% endblock %}

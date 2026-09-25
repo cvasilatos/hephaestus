@@ -1,0 +1,21 @@
+[Unit]
+Description=Hephaestus notification worker
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=gpu-booking
+Group=gpu-booking
+WorkingDirectory=/opt/gpu-booking
+EnvironmentFile=/etc/gpu-booking/web.env
+ExecStart=/opt/gpu-booking/.venv/bin/python manage.py runworker
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target

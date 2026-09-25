@@ -1,0 +1,22 @@
+{% extends "booking/base.html" %}
+{% block title %}Sign in · Hephaestus{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-intro">
+    <span class="eyebrow">Shared compute, without collisions</span>
+    <h1>Reserve the GPU.<br>Own the time.</h1>
+    <p>Use the same credentials as your Linux server account. Your password is checked by PAM and is never stored here.</p>
+    <div class="signal-row"><span></span><span></span><span></span><span></span></div>
+  </div>
+  <form method="post" class="panel auth-card">
+    {% csrf_token %}
+    <div><span class="eyebrow">Private server</span><h2>Welcome back</h2><p class="muted">Sign in to view and reserve compute.</p></div>
+    {{ form.non_field_errors }}
+    <label for="{{ form.username.id_for_label }}">Linux username</label>
+    {{ form.username }}{{ form.username.errors }}
+    <label for="{{ form.password.id_for_label }}">Password</label>
+    {{ form.password }}{{ form.password.errors }}
+    <button class="button primary wide" type="submit">Sign in</button>
+  </form>
+</section>
+{% endblock %}

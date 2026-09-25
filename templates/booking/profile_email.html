@@ -1,0 +1,16 @@
+{% extends "booking/base.html" %}
+{% block title %}Email · Hephaestus{% endblock %}
+{% block content %}
+<section class="narrow-page">
+  <div class="page-heading"><span class="eyebrow">Account</span><h1>Reminder email</h1><p>We use this address only for verification, booking warnings, and operational notices.</p></div>
+  <form method="post" class="panel form-section">
+    {% csrf_token %}
+    <div class="verification-state {% if user.profile.email_is_verified %}verified{% endif %}">
+      {% if user.profile.email_is_verified %}<strong>Verified</strong><span>{{ user.profile.email }}</span>{% else %}<strong>Not verified</strong><span>A verified address is required before booking.</span>{% endif %}
+    </div>
+    {{ form.non_field_errors }}
+    <label for="{{ form.email.id_for_label }}">Email address</label>{{ form.email }}{{ form.email.errors }}
+    <button class="button primary" type="submit">Send verification link</button>
+  </form>
+</section>
+{% endblock %}

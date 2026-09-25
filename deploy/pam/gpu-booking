@@ -1,0 +1,3 @@
+# Dedicated PAM policy for the Hephaestus website.
+@include common-auth
+@include common-account

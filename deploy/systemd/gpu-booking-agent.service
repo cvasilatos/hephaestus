@@ -1,0 +1,24 @@
+[Unit]
+Description=Hephaestus privileged access agent
+After=network.target postgresql.service nvidia-persistenced.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/gpu-booking
+EnvironmentFile=/etc/gpu-booking/agent.env
+StateDirectory=gpu-booking
+ExecStart=/opt/gpu-booking/.venv/bin/python -m gpu_access.cli run
+Restart=on-failure
+RestartSec=3
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/run/gpu-booking /var/lib/gpu-booking /dev
+CapabilityBoundingSet=CAP_CHOWN CAP_DAC_OVERRIDE CAP_FOWNER CAP_KILL
+AmbientCapabilities=CAP_CHOWN CAP_DAC_OVERRIDE CAP_FOWNER CAP_KILL
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+{% extends "booking/base.html" %}
+{% block title %}My bookings · Hephaestus{% endblock %}
+{% block content %}
+<section class="page-heading split-heading"><div><span class="eyebrow">Your compute</span><h1>My bookings</h1><p>Upcoming, active, and previous reservations.</p></div><a class="button primary" href="{% url 'reservation-create' %}">New booking</a></section>
+<section class="reservation-list">
+{% for reservation in reservations %}
+  <article class="panel reservation-row">
+    <div class="reservation-date"><strong data-local-day="{{ reservation.starts_at.isoformat }}">{{ reservation.starts_at|date:"d" }}</strong><span data-local-month="{{ reservation.starts_at.isoformat }}">{{ reservation.starts_at|date:"M" }}</span></div>
+    <div class="reservation-main"><div><span class="badge {{ reservation.status }}">{{ reservation.get_status_display }}</span>{% if reservation.description %}<strong>{{ reservation.description }}</strong>{% endif %}</div><p>{% for item in reservation.allocations.all %}{{ item.gpu }}{% if not forloop.last %}, {% endif %}{% endfor %}</p><p class="muted"><time data-local-time="{{ reservation.starts_at.isoformat }}">{{ reservation.starts_at }}</time> → <time data-local-time="{{ reservation.ends_at.isoformat }}">{{ reservation.ends_at }}</time></p></div>
+    <div class="row-actions">
+      {% if reservation.user_can_edit %}<a class="button secondary small" href="{% url 'reservation-edit' reservation.id %}">Edit</a>{% endif %}
+      {% if reservation.user_can_release %}<form method="post" action="{% url 'reservation-cancel' reservation.id %}" data-confirm="Release this reservation? Running work will be stopped according to policy.">{% csrf_token %}<button class="button danger small">{% if reservation.can_end_early %}End now{% else %}Cancel{% endif %}</button></form>{% endif %}
+    </div>
+  </article>
+{% empty %}<div class="empty-state panel"><h2>No reservations yet</h2><p>Book one or more GPUs when you are ready to run.</p><a class="button primary" href="{% url 'reservation-create' %}">Book GPUs</a></div>{% endfor %}
+</section>
+{% endblock %}

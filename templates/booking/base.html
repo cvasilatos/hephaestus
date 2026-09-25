@@ -1,0 +1,47 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0b100d">
+  <title>{% block title %}Hephaestus{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'booking/app.css' %}?v=5">
+  <script defer src="{% static 'booking/app.js' %}"></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="{% url 'dashboard' %}">
+      <span class="brand-mark" aria-hidden="true">G</span>
+      <span><strong>Hephaestus</strong><small>Compute access</small></span>
+    </a>
+    {% if user.is_authenticated %}
+      <nav aria-label="Main navigation">
+        <a href="{% url 'dashboard' %}">Schedule</a>
+        <a href="{% url 'my-reservations' %}">My bookings</a>
+        <a href="{% url 'policy' %}">Policy</a>
+        {% if is_os_admin %}<a href="{% url 'admin-overview' %}">Control room</a>{% endif %}
+      </nav>
+      <div class="account-menu">
+        <a href="{% url 'profile-email' %}">{{ user.username }}</a>
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link-button">Sign out</button></form>
+      </div>
+    {% endif %}
+  </header>
+
+  <main id="main" class="page-shell">
+    {% if messages %}
+      <div class="messages" aria-live="polite">
+        {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    Times are shown in your browser timezone. Site timezone: {{ site_configuration.site_timezone }}.
+  </footer>
+</body>
+</html>

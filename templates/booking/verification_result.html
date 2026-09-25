@@ -1,0 +1,8 @@
+{% extends "booking/base.html" %}
+{% block title %}Email verification · Hephaestus{% endblock %}
+{% block content %}
+<section class="result-card panel">
+  {% if verified %}<span class="result-icon success">✓</span><h1>Email verified</h1><p>You can now create GPU reservations.</p><a class="button primary" href="{% url 'dashboard' %}">Open schedule</a>
+  {% else %}<span class="result-icon failure">!</span><h1>Link not valid</h1><p>The verification link has expired or no longer matches your address.</p><a class="button primary" href="{% url 'profile-email' %}">Request another link</a>{% endif %}
+</section>
+{% endblock %}

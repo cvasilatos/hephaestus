@@ -1,0 +1,30 @@
+{% extends "booking/base.html" %}
+{% block title %}{{ title }} · Hephaestus{% endblock %}
+{% block content %}
+<section class="page-heading"><span class="eyebrow">Atomic allocation</span><h1>{{ title }}</h1><p>Every selected GPU must be available for the full time window.</p></section>
+<form method="post" class="booking-layout" data-reservation-form>
+  {% csrf_token %}
+  <section class="panel form-section">
+    <span class="step">01</span><h2>Select GPUs</h2>
+    {{ form.gpus.errors }}
+    <div class="gpu-picker">{{ form.gpus }}</div>
+    <p class="hint">{{ form.gpus.help_text }}</p>
+  </section>
+  <section class="panel form-section">
+    <span class="step">02</span><h2>Choose time</h2>
+    {{ form.starts_at }}{{ form.ends_at }}
+    <div class="field-grid" data-booking-policy data-slot-minutes="{{ site_configuration.slot_minutes }}" data-default-minutes="{{ site_configuration.default_reservation_minutes }}" data-notice-minutes="{{ site_configuration.booking_notice_minutes }}">
+      <div><label for="starts-local">Starts</label><input id="starts-local" type="datetime-local" required data-utc-target="{{ form.starts_at.id_for_label }}"></div>
+      <div><label for="ends-local">Ends</label><input id="ends-local" type="datetime-local" required data-utc-target="{{ form.ends_at.id_for_label }}"></div>
+    </div>
+    <p class="hint">Your timezone: <strong data-browser-timezone>detecting…</strong>. Slots begin every {{ site_configuration.slot_minutes }} minutes; duration must be {{ site_configuration.minimum_reservation_minutes }}–{{ site_configuration.max_reservation_minutes }} minutes{% if site_configuration.booking_horizon_days %}, within {{ site_configuration.booking_horizon_days }} days{% endif %}.</p>
+  </section>
+  <section class="panel form-section">
+    <span class="step">03</span><h2>Add context</h2>
+    <label for="{{ form.description.id_for_label }}">Project or purpose <span class="muted">optional</span></label>
+    {{ form.description }}{{ form.description.errors }}
+  </section>
+  {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="form-actions"><a class="button secondary" href="{% url 'dashboard' %}">Cancel</a><button class="button primary" type="submit">{% if reservation %}Save changes{% else %}Confirm reservation{% endif %}</button></div>
+</form>
+{% endblock %}

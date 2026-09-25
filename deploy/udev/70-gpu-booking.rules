@@ -1,0 +1,7 @@
+# Per-GPU devices are locked by default. gpu-accessd grants per-UID ACLs while booked.
+KERNEL=="nvidia[0-9]*", OWNER="root", GROUP="root", MODE="0600"
+
+# CUDA control/UVM devices are shared; numeric device nodes remain the authorization boundary.
+KERNEL=="nvidiactl", OWNER="root", GROUP="root", MODE="0666"
+KERNEL=="nvidia-uvm", OWNER="root", GROUP="root", MODE="0666"
+KERNEL=="nvidia-uvm-tools", OWNER="root", GROUP="root", MODE="0666"

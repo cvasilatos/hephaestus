@@ -1,0 +1,14 @@
+{% extends "booking/base.html" %}
+{% block title %}{{ gpu }} · Hephaestus{% endblock %}
+{% block content %}
+<section class="narrow-page">
+  <div class="page-heading"><span class="eyebrow">Administration</span><h1>GPU {{ gpu.current_index }}</h1><p>{{ gpu.name }} · {{ gpu.uuid }}</p></div>
+  <form method="post" class="panel form-section">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="settings-grid">{% include "booking/_setting_field.html" with field=form.allocation_type %}{% include "booking/_setting_field.html" with field=form.owner_group %}{% include "booking/_setting_field.html" with field=form.enabled %}</div>
+    <p class="hint">Shared GPUs count against monthly group quotas. Fixed GPUs belong to one group. Unassigned GPUs cannot be booked while allocation rules are enforced.</p>
+    <div class="form-actions"><a class="button secondary" href="{% url 'admin-overview' %}">Cancel</a><button class="button primary" type="submit">Save GPU policy</button></div>
+  </form>
+</section>
+{% endblock %}

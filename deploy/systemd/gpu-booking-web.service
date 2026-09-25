@@ -1,0 +1,23 @@
+[Unit]
+Description=Hephaestus web application
+After=network.target postgresql.service gpu-booking-authd.service
+Requires=postgresql.service gpu-booking-authd.service
+
+[Service]
+Type=notify
+User=gpu-booking
+Group=www-data
+SupplementaryGroups=gpu-booking
+WorkingDirectory=/opt/gpu-booking
+EnvironmentFile=/etc/gpu-booking/web.env
+ExecStart=/opt/gpu-booking/.venv/bin/gunicorn gpu_booking.wsgi:application --workers 3 --bind unix:/run/gpu-booking/web.sock --umask 007 --access-logfile - --error-logfile -
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/run/gpu-booking
+
+[Install]
+WantedBy=multi-user.target

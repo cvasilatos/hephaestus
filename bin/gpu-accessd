@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /opt/gpu-booking/.venv/bin/python -m gpu_access.cli "$@"

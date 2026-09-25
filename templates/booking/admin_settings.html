@@ -1,0 +1,91 @@
+{% extends "booking/base.html" %}
+{% block title %}Policy settings · Hephaestus{% endblock %}
+{% block content %}
+<section class="settings-page">
+  <div class="page-heading">
+    <span class="eyebrow">Administration</span>
+    <h1>Policy settings</h1>
+    <p>Control who can book, reservation limits, enforcement timing, and what the shared schedule reveals. Saved changes apply immediately to new requests and future enforcement cycles.</p>
+  </div>
+  <form method="post" class="settings-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+
+    <section class="panel settings-section">
+      <header><span class="step">01</span><div><h2>Time and duration</h2><p>Define the booking grid and allowed reservation window.</p></div></header>
+      <div class="settings-grid">
+        {% include "booking/_setting_field.html" with field=form.site_timezone %}
+        {% include "booking/_setting_field.html" with field=form.slot_minutes %}
+        {% include "booking/_setting_field.html" with field=form.minimum_reservation_minutes %}
+        {% include "booking/_setting_field.html" with field=form.default_reservation_minutes %}
+        {% include "booking/_setting_field.html" with field=form.max_reservation_minutes %}
+        {% include "booking/_setting_field.html" with field=form.booking_notice_minutes %}
+        {% include "booking/_setting_field.html" with field=form.booking_horizon_days %}
+      </div>
+    </section>
+
+    <section class="panel settings-section">
+      <header><span class="step">02</span><div><h2>Access and quotas</h2><p>Set user prerequisites and prevent one account from monopolizing capacity.</p></div></header>
+      <div class="settings-grid">
+        {% include "booking/_setting_field.html" with field=form.max_gpus_per_reservation %}
+        {% include "booking/_setting_field.html" with field=form.max_open_reservations_per_user %}
+        {% include "booking/_setting_field.html" with field=form.require_verified_email %}
+      </div>
+    </section>
+
+    <section class="panel settings-section">
+      <header><span class="step">03</span><div><h2>User changes</h2><p>Choose which changes users may make without administrator intervention.</p></div></header>
+      <div class="settings-grid">
+        {% include "booking/_setting_field.html" with field=form.allow_user_edits %}
+        {% include "booking/_setting_field.html" with field=form.allow_user_cancellations %}
+        {% include "booking/_setting_field.html" with field=form.allow_early_release %}
+        {% include "booking/_setting_field.html" with field=form.cancellation_cutoff_minutes %}
+      </div>
+    </section>
+
+    <section class="panel settings-section">
+      <header><span class="step">04</span><div><h2>Enforcement and notifications</h2><p>Configure advance warning and the process shutdown sequence.</p></div></header>
+      <div class="settings-grid">
+        {% include "booking/_setting_field.html" with field=form.warning_minutes %}
+        {% include "booking/_setting_field.html" with field=form.termination_grace_minutes %}
+      </div>
+    </section>
+
+    <section class="panel settings-section">
+      <header><span class="step">05</span><div><h2>Shared schedule</h2><p>Control the visible planning range and reservation privacy.</p></div></header>
+      <div class="settings-grid">
+        {% include "booking/_setting_field.html" with field=form.calendar_days %}
+        {% include "booking/_setting_field.html" with field=form.show_usernames_on_schedule %}
+      </div>
+    </section>
+
+    <section class="panel settings-section">
+      <header><span class="step">06</span><div><h2>Group allocation policy</h2><p>Control group membership, monthly shared-pool quotas, fixed GPU ownership, and borrowing.</p></div></header>
+      <div class="settings-grid">
+        {% include "booking/_setting_field.html" with field=form.require_group_membership %}
+        {% include "booking/_setting_field.html" with field=form.enforce_gpu_allocation_rules %}
+        {% include "booking/_setting_field.html" with field=form.enforce_group_quotas %}
+        {% include "booking/_setting_field.html" with field=form.require_fixed_gpu_permission %}
+      </div>
+    </section>
+
+    <section class="panel settings-section">
+      <header><span class="step">07</span><div><h2>Published policy</h2><p>Edit the operational guidance shown to every signed-in user.</p></div></header>
+      <div class="settings-grid policy-settings-grid">
+        {% include "booking/_setting_field.html" with field=form.policy_name %}
+        {% include "booking/_setting_field.html" with field=form.administrator_contact %}
+        {% include "booking/_setting_field.html" with field=form.cluster_hostname %}
+        {% include "booking/_setting_field.html" with field=form.cluster_ssh_port %}
+        {% include "booking/_setting_field.html" with field=form.policy_intro %}
+        {% include "booking/_setting_field.html" with field=form.shared_gpu_instructions %}
+        {% include "booking/_setting_field.html" with field=form.monitoring_instructions %}
+        {% include "booking/_setting_field.html" with field=form.storage_instructions %}
+        {% include "booking/_setting_field.html" with field=form.fair_use_instructions %}
+        {% include "booking/_setting_field.html" with field=form.policy_checklist %}
+      </div>
+    </section>
+
+    <div class="form-actions sticky-actions"><a class="button secondary" href="{% url 'admin-overview' %}">Back</a><button class="button primary" type="submit">Save policy</button></div>
+  </form>
+</section>
+{% endblock %}

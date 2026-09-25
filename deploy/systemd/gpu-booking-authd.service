@@ -1,0 +1,21 @@
+[Unit]
+Description=Hephaestus restricted PAM authentication broker
+After=local-fs.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/gpu-booking
+EnvironmentFile=/etc/gpu-booking/web.env
+ExecStart=/opt/gpu-booking/.venv/bin/python -m gpu_access.authd
+Restart=on-failure
+RestartSec=3
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/run/gpu-booking -/run/faillock
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

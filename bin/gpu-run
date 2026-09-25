@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /opt/gpu-booking/.venv/bin/python -c 'from gpu_access.session import run_main; run_main()' "$@"

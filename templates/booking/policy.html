@@ -1,0 +1,52 @@
+{% extends "booking/base.html" %}
+{% block title %}Policy · Hephaestus{% endblock %}
+{% block content %}
+<section class="policy-page">
+  <div class="page-heading">
+    <span class="eyebrow">Compute access</span>
+    <h1>{{ site_configuration.policy_name }}</h1>
+    <p>{{ site_configuration.policy_intro }}</p>
+  </div>
+
+  <div class="policy-grid">
+    <section class="panel policy-section">
+      <span class="eyebrow">Connect</span>
+      <h2>Hydra access</h2>
+      <p>Use your NYU NetID on the NYUAD network or VPN when required.</p>
+      <code>ssh netid@{{ site_configuration.cluster_hostname }} -p {{ site_configuration.cluster_ssh_port }}</code>
+      <p class="muted">Administrator: {{ site_configuration.administrator_contact }}</p>
+    </section>
+
+    <section class="panel policy-section">
+      <span class="eyebrow">Shared pool</span>
+      <h2>GPU-hour allocation</h2>
+      <p>{{ site_configuration.shared_gpu_instructions }}</p>
+      <p class="policy-gpu-list"><strong>Shared now:</strong> {% for gpu in shared_gpus %}#{{ gpu.current_index }}{% if not forloop.last %}, {% endif %}{% empty %}none configured{% endfor %}</p>
+    </section>
+  </div>
+
+  <section class="panel policy-section">
+    <header class="panel-heading"><div><span class="eyebrow">Assignments</span><h2>Research groups and fixed GPUs</h2></div></header>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Group</th><th>Monthly shared allowance</th><th>Fixed GPUs</th></tr></thead>
+        <tbody>{% for group in groups %}<tr><td><strong>{{ group.name }}</strong>{% if not group.enabled %} <span class="badge cancelled">Disabled</span>{% endif %}</td><td>{% if group.monthly_shared_gpu_hours %}{{ group.monthly_shared_gpu_hours }} GPU-hours{% else %}Unlimited{% endif %}</td><td>{% for gpu in group.fixed_gpus.all %}#{{ gpu.current_index }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}</td></tr>{% empty %}<tr><td colspan="3">No research groups configured.</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <p class="muted">Using another group's fixed GPU requires an active permission recorded by an administrator.</p>
+  </section>
+
+  <div class="policy-grid">
+    <section class="panel policy-section"><span class="eyebrow">During the run</span><h2>Monitoring and completion</h2><p>{{ site_configuration.monitoring_instructions }}</p></section>
+    <section class="panel policy-section"><span class="eyebrow">Data</span><h2>Storage handling</h2><p>{{ site_configuration.storage_instructions }}</p></section>
+  </div>
+
+  <section class="panel policy-section"><span class="eyebrow">Accountability</span><h2>Fair use and enforcement</h2><p>{{ site_configuration.fair_use_instructions }}</p></section>
+
+  <section class="panel policy-section">
+    <span class="eyebrow">Before launch</span>
+    <h2>User checklist</h2>
+    <ul class="policy-checklist">{% for item in policy_checklist %}<li>{{ item }}</li>{% endfor %}</ul>
+  </section>
+</section>
+{% endblock %}

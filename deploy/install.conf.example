@@ -1,0 +1,27 @@
+# Copy this file outside the checkout, fill in the required values, then run:
+#   sudo ./deploy/bootstrap.sh /root/gpu-booking.conf
+#
+# Values are literal text after the first "=". Do not add shell quotes.
+
+# Required: the private DNS name and existing TLS certificate used by Nginx.
+SERVER_NAME=gpu-booking.example.edu
+TLS_CERT=/etc/ssl/certs/gpu-booking.pem
+TLS_KEY=/etc/ssl/private/gpu-booking.key
+
+# Required: alert recipient(s), separated by commas.
+ADMIN_EMAILS=gpu-admins@example.edu
+
+# Optional: this existing Linux user is added to gpu-booking-admins.
+ADMIN_USER=
+
+# Site and mail settings.
+SITE_TIMEZONE=Asia/Dubai
+SMTP_HOST=smtp.example.edu
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_USE_TLS=true
+DEFAULT_FROM_EMAIL=Hephaestus <gpu-booking@example.edu>
+
+# Set this to false only when the prerequisite packages and uv are already installed.
+INSTALL_SYSTEM_PACKAGES=true
